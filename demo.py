@@ -34,7 +34,18 @@ data = {
 }
 
 cursor.execute(SQLQUERY, data)
+
+# fetching results
 cursor.execute('SELECT * FROM todos');
+result = cursor.fetchall()
+print(result)
+
+result2 = cursor.fetchmany(2)
+print(result2)
+
+result3 = cursor.fetchone()
+print(result3)
+
 
 # commit, so it does the executions on the db and persists in the db
 connection.commit()
