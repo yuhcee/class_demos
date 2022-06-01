@@ -1,31 +1,7 @@
 <html>
     <head>
         <title>Todo App</title>
-        <style>
-            body {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            main {
-                max-width: 550px;
-                padding: 16px;
-                margin: 16px;
-                background: hotpink;
-                margin-left: auto;
-                margin-right: auto;
-            }
-            h1 {
-                font-size: 18px;
-                text-align: center;
-            }
-            .hidden {
-                display: none;
-            }
-            #error {
-                color: red;
-            }
-        </style>
+        <link type="text/css" href="../static/style.css" rel="stylesheet" />
     </head>
     <body>
         <main>
@@ -41,33 +17,7 @@
             </ul>
 
             <div class="hidden" id="error">Something went wrong!</div>
-            <script>
-                const descInput = document.getElementById('description');
-                document.getElementById('form').onsubmit = function (e) {
-                    e.preventDefault();
-                    const desc = descInput.value;
-
-                    fetch('/todos/create', {
-                        method: 'POST',
-                        body: JSON.stringify({ description: desc }),
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    })
-                        .then(function (response) {
-                            return response.json();
-                        })
-                        .then(function (jsonResponse) {
-                            const liItem = document.createElement('li');
-                            liItem.innerHTML = jsonResponse['description'];
-                            document.getElementById('todos').appendChild(liItem);
-                            document.getElementById('error').classname = 'hidden';
-                        })
-                        .catch(function () {
-                            document.getElementById('error').className = '';
-                        });
-                };
-            </script>
+            <script type="text/javascript" src="../static/script.js" defer></script>
         </main>
     </body>
 </html>
