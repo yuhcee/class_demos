@@ -20,7 +20,7 @@ class Todo(db.Model):
     completed = db.Column(db.Boolean, nullable=False, default=False)
     
     def __repr__(self):
-     return f'<Todo ID: {self.id}, description: {self.name}>'
+     return f'<Todo ID: {self.id}, description: {self.description}>'
 
 @app.route('/todos/create', methods=['POST'])
 def create_todo():
