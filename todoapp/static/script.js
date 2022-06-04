@@ -1,5 +1,19 @@
 const descInput = document.getElementById('description');
 const checkboxes = document.querySelectorAll('.check-completed');
+const deleteBtns = document.querySelectorAll('.delete-button');
+
+for (let i = 0; i < deleteBtns.length; i++) {
+    const deleteBtn = deleteBtns[i];
+    deleteBtn.onclick = function (e) {
+        const todoId = e.target.dataset['id'];
+        fetch('/todos/' + todoId, {
+            method: 'DELETE',
+        }).then(function () {
+            const item = e.target.parentElement;
+            item.remove;
+        });
+    };
+}
 
 for (let i = 0; i < checkboxes.length; i++) {
     const checkbox = checkboxes[i];
