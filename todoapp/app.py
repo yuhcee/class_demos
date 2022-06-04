@@ -127,6 +127,26 @@ def create_list():
     else:
         return jsonify(body)
 
+@app.route('/lists/<list_id>/delete', methods=['DELETE'])
+def delete_list(list_id):
+    error = False
+    try:
+        list = TodoList.query.get(list_id)
+        for todo in list.todos:
+            db.session.delete(todo)
+
+        db.session.delete(list)
+        db.session.commit()
+    except():
+        db.session.rollback()
+        error = True
+    finally:
+        db.session.close()
+    if error:
+        abort(500)
+    else:
+        return jsonify({'success': True})
+
 if __name__ == '__main__':
         app.debug = True
         app.run(host='0.0.0.0', port=4000)
