@@ -14,6 +14,7 @@
                 {% for todo in todos %}
                 <li><input data-id="{{todo.id}}" class="check-completed" type="checkbox" {% if todo.completed %} checked {% endif %} />{{ todo.description }}</li>
                 {% endfor %}
+                <button class="delete-button" data-id="{{todo.id}}">&cross;</button>
             </ul>
 
             <div class="hidden" id="error">Something went wrong!</div>
