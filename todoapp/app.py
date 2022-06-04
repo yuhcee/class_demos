@@ -1,4 +1,5 @@
 from crypt import methods
+from distutils.log import error
 from email.policy import default
 import sys
 from flask import Flask, abort, jsonify, render_template, request, redirect, url_for
@@ -18,10 +19,10 @@ class Todo(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     description = db.Column(db.String(),nullable=False)
     completed = db.Column(db.Boolean, nullable=False, default=False)
-    list_id = db.Column(db.Integer, db.ForeignKey('todolists.id'), nullable=False)
+    list_id = db.Column(db.Integer, db.ForeignKey('todolists.id'), nullable=False, default=1)
     
     def __repr__(self):
-     return f'<Todo ID: {self.id}, description: {self.description}>'
+     return f'<Todo ID: {self.id}, description: {self.description} completed: {self.completed}>'
 
 class TodoList(db.Model):
     __tablename__ = 'todolists'
@@ -35,10 +36,13 @@ def create_todo():
     error = False
     try:
         description=request.get_json()['description']
-        todo=Todo(description=description)
-        body['description'] = todo.description
+        list_id = request.get_json()['list_id']
+        todo = Todo(description=description, completed=False, list_id=list_id)
         db.session.add(todo)
         db.session.commit()
+        body['id'] = todo.id
+        body['description'] = todo.description
+        body['completed'] = todo.completed
     except:
         error=True
         db.session.rollback()
@@ -46,7 +50,7 @@ def create_todo():
     finally:
         db.session.close()
         if error == True:
-            abort(400)
+            abort(500)
         else:
             return jsonify(body)
 
@@ -59,26 +63,33 @@ def set_completed(todo_id):
         todo.completed = completed
         db.session.commit()
     except:
-        error=True
         db.session.rollback()
+        error=True
         print(sys.exc_info())
     finally:
         db.session.close()
         if error == True:
-            abort(400)
+            abort(500)
         else:
             return redirect(url_for('index'))
 
-@app.route('/todos/<todo_id>', methods=['DELETE'])
+@app.route('/todos/<todo_id>/delete', methods=['DELETE'])
 def delete_todo(todo_id):
+    error=False
     try:
-        Todo.query.filter_by(id=todo_id).delete()
+        # Todo.query.filter_by(id=todo_id).delete()
+        todo=Todo.query.get(todo_id)
+        db.session.delete(todo)
         db.session.commit()
     except:
         db.session.rollback
+        error=True
     finally:
         db.session.close()
-        return jsonify({'success': True})
+        if(error):
+            abort(500)
+        else:
+           return jsonify({'success': True})
 
 @app.route('/lists/<list_id>')
 def get_list_todos(list_id):
@@ -92,11 +103,6 @@ def get_list_todos(list_id):
 def index():
   return redirect(url_for('get_list_todos', list_id=1))
 
-# @app.route('/')
-# def index():
-#     # todo = Todo.query.first()
-#     # return f"Your todo number {todo.id} is to {todo.description}."
-#     return render_template('index.html', todos=Todo.query.order_by('id').all())
 
 if __name__ == '__main__':
         app.debug = True
