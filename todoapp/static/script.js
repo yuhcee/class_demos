@@ -1,6 +1,7 @@
 const listId = document.getElementById('list_id');
 const descInput = document.getElementById('description');
-const deleteBtns = document.querySelectorAll('.delete-button');
+const deleteBtns = document.querySelectorAll('.delete-todo');
+const deleteListBtns = document.querySelectorAll(".delete-list");
 const todoCheckboxes = document.querySelectorAll('.todo-check-completed');
 const listCheckboxes = document.querySelectorAll('.list-check-completed');
 
@@ -10,11 +11,17 @@ for (let i = 0; i < deleteBtns.length; i++) {
         const todoId = e.target.dataset['id'];
         fetch('/todos/' + todoId + '/delete', {
             method: 'DELETE',
-        }).then(function () {
-            const item = e.target.parentElement;
-            item.remove;
-            location.reload();
-        });
+        })
+            .then(function () {
+                const item = e.target.parentElement;
+                item.remove;
+                document.getElementById('error').className = 'hidden';
+                location.reload();
+            })
+            .catch(function (e) {
+                console.error(e);
+                document.getElementById('error').className = '';
+            });
     };
 }
 
@@ -81,3 +88,34 @@ document.getElementById('todo-form').onsubmit = function (e) {
 };
 
 // ============================== LISTS ================================
+
+for (let i = 0; i < listCheckboxes.length; i++) {
+    const checkbox = listCheckboxes[i];
+
+    checkbox.onchange = function (e) {
+        if (e.target.checked) {
+            const listId = e.target.dataset.id;
+
+            fetch('/lists/' + listId + '/set-completed', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(function (jsonResponse) {
+                    document.getElementById('error').className = 'hidden';
+
+                    const todoCheckboxes = document.querySelectorAll('.todo-check-completed');
+
+                    for (let i = 0; i < todoCheckboxes.length; i++) {
+                        const checkbox = todoCheckboxes[i];
+
+                        checkbox.checked = true;
+                    }
+                })
+                .catch(function () {
+                    document.getElementById('error').className = '';
+                });
+        }
+    };
+}
