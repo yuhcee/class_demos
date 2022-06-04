@@ -1,11 +1,34 @@
 const descInput = document.getElementById('description');
+const checkboxes = document.querySelectorAll('.check-completed');
+
+for (let i = 0; i < checkboxes.length; i++) {
+    const checkbox = checkboxes[i];
+    checkbox.onchange = function (e) {
+        const completed = e.target.checked;
+        const todoId = e.target.dataset['id'];
+        fetch('/todos/' + todoId + '/set-completed', {
+            method: 'POST',
+            body: JSON.stringify({ completed }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(function () {
+                document.getElementById('error').className = 'hidden';
+            })
+            .catch(function () {
+                document.getElementById('error').className = '';
+            });
+    };
+}
+
 document.getElementById('form').onsubmit = function (e) {
     e.preventDefault();
-    const desc = descInput.value;
+    const description = descInput.value;
 
     fetch('/todos/create', {
         method: 'POST',
-        body: JSON.stringify({ description: desc }),
+        body: JSON.stringify({ description }),
         headers: {
             'Content-Type': 'application/json',
         },
