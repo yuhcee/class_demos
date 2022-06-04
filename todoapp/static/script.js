@@ -11,6 +11,7 @@ for (let i = 0; i < deleteBtns.length; i++) {
         }).then(function () {
             const item = e.target.parentElement;
             item.remove;
+            location.reload();
         });
     };
 }
@@ -51,12 +52,29 @@ document.getElementById('form').onsubmit = function (e) {
             return response.json();
         })
         .then(function (jsonResponse) {
-            const liItem = document.createElement('li');
-            liItem.innerHTML = jsonResponse['description'];
-            document.getElementById('todos').appendChild(liItem);
+            const li = document.createElement('li');
+            const checkbox = document.createElement('input');
+            checkbox.className = 'check-completed';
+            checkbox.type = 'checkbox';
+            checkbox.setAttribute('data-id', jsonResponse.id);
+            li.appendChild(checkbox);
+
+            const text = document.createTextNode(' ' + jsonResponse.description);
+            li.appendChild(text);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-button';
+            deleteBtn.setAttribute('data-id', jsonResponse.id);
+            deleteBtn.innerHTML = '&cross;';
+            li.appendChild(deleteBtn);
+
+            document.getElementById('todos').appendChild(li);
             document.getElementById('error').classname = 'hidden';
+            location.reload();
         })
-        .catch(function () {
+        .catch(function (e) {
+            console.log(e);
+            console.error('Error occured');
             document.getElementById('error').className = '';
         });
 };
