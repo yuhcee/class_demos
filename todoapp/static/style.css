@@ -14,10 +14,31 @@ main {
 }
 ul {
     list-style-type: none;
-    text-align: left;
-    width: 46%;
+    width: 400px;
+    padding: 0;
+    margin: 0;
     margin-left: auto;
     margin-right: auto;
+}
+li {
+    clear: both;
+    text-align: left;
+    margin-bottom: 2px;
+}
+li button {
+    -webkit-appearance: none;
+    border: none;
+    outline: none;
+    color: red;
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+    margin-bottom: 2px;
+}
+.lists-wrapper,
+.todos-wrapper {
+    display: inline-block;
+    vertical-align: top;
 }
 .hidden {
     display: none;
