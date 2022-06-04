@@ -71,7 +71,7 @@ def set_completed(todo_id):
         if error == True:
             abort(500)
         else:
-            return redirect(url_for('index'))
+            return '', 200
 
 @app.route('/todos/<todo_id>/delete', methods=['DELETE'])
 def delete_todo(todo_id):
@@ -137,7 +137,7 @@ def delete_list(list_id):
 
         db.session.delete(list)
         db.session.commit()
-    except():
+    except:
         db.session.rollback()
         error = True
     finally:
@@ -146,6 +146,29 @@ def delete_list(list_id):
         abort(500)
     else:
         return jsonify({'success': True})
+
+@app.route('/lists/<list_id>/set-completed', methods=['POST'])
+def set_completed_list(list_id):
+    error = False
+
+    try:
+        list = TodoList.query.get(list_id)
+
+        for todo in list.todos:
+            todo.completed = True
+
+        db.session.commit()
+    except:
+        db.session.rollback()
+
+        error = True
+    finally:
+        db.session.close()
+
+    if error:
+        abort(500)
+    else:
+        return '', 200
 
 if __name__ == '__main__':
         app.debug = True
