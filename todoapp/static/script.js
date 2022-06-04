@@ -6,7 +6,7 @@ for (let i = 0; i < deleteBtns.length; i++) {
     const deleteBtn = deleteBtns[i];
     deleteBtn.onclick = function (e) {
         const todoId = e.target.dataset['id'];
-        fetch('/todos/' + todoId, {
+        fetch('/todos/' + todoId + '/delete', {
             method: 'DELETE',
         }).then(function () {
             const item = e.target.parentElement;
@@ -40,6 +40,7 @@ for (let i = 0; i < checkboxes.length; i++) {
 document.getElementById('form').onsubmit = function (e) {
     e.preventDefault();
     const description = descInput.value;
+    descInput.value = '';
 
     fetch('/todos/create', {
         method: 'POST',
@@ -48,10 +49,8 @@ document.getElementById('form').onsubmit = function (e) {
             'Content-Type': 'application/json',
         },
     })
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (jsonResponse) {
+        .then((response) => response.json())
+        .then((jsonResponse) => {
             const li = document.createElement('li');
             const checkbox = document.createElement('input');
             checkbox.className = 'check-completed';
@@ -70,7 +69,6 @@ document.getElementById('form').onsubmit = function (e) {
 
             document.getElementById('todos').appendChild(li);
             document.getElementById('error').classname = 'hidden';
-            location.reload();
         })
         .catch(function (e) {
             console.log(e);
