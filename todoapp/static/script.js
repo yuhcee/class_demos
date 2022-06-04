@@ -1,6 +1,8 @@
+const listId = document.getElementById('list_id');
 const descInput = document.getElementById('description');
-const checkboxes = document.querySelectorAll('.check-completed');
 const deleteBtns = document.querySelectorAll('.delete-button');
+const todoCheckboxes = document.querySelectorAll('.todo-check-completed');
+const listCheckboxes = document.querySelectorAll('.list-check-completed');
 
 for (let i = 0; i < deleteBtns.length; i++) {
     const deleteBtn = deleteBtns[i];
@@ -16,8 +18,8 @@ for (let i = 0; i < deleteBtns.length; i++) {
     };
 }
 
-for (let i = 0; i < checkboxes.length; i++) {
-    const checkbox = checkboxes[i];
+for (let i = 0; i < todoCheckboxes.length; i++) {
+    const checkbox = todoCheckboxes[i];
     checkbox.onchange = function (e) {
         const completed = e.target.checked;
         const todoId = e.target.dataset['id'];
@@ -37,14 +39,15 @@ for (let i = 0; i < checkboxes.length; i++) {
     };
 }
 
-document.getElementById('form').onsubmit = function (e) {
+document.getElementById('todo-form').onsubmit = function (e) {
     e.preventDefault();
     const description = descInput.value;
+    const list_id = listId.value;
     descInput.value = '';
 
     fetch('/todos/create', {
         method: 'POST',
-        body: JSON.stringify({ description }),
+        body: JSON.stringify({ description, list_id }),
         headers: {
             'Content-Type': 'application/json',
         },
@@ -76,3 +79,5 @@ document.getElementById('form').onsubmit = function (e) {
             document.getElementById('error').className = '';
         });
 };
+
+// ============================== LISTS ================================
