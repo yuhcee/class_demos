@@ -1,7 +1,7 @@
 const listId = document.getElementById('list_id');
 const descInput = document.getElementById('description');
 const deleteBtns = document.querySelectorAll('.delete-todo');
-const deleteListBtns = document.querySelectorAll(".delete-list");
+const deleteListBtns = document.querySelectorAll('.delete-list');
 const todoCheckboxes = document.querySelectorAll('.todo-check-completed');
 const listCheckboxes = document.querySelectorAll('.list-check-completed');
 
@@ -117,5 +117,28 @@ for (let i = 0; i < listCheckboxes.length; i++) {
                     document.getElementById('error').className = '';
                 });
         }
+    };
+}
+
+for (let i = 0; i < deleteListBtns.length; i++) {
+    const deleteBtn = deleteListBtns[i];
+    deleteBtn.onclick = function (e) {
+        console.log('Delete event: ', e);
+        const listId = e.target.dataset.id;
+
+        fetch('/lists/' + listId + '/delete', {
+            method: 'DELETE',
+        })
+            .then(function () {
+                console.log('Parent?', e.target);
+                const item = e.target.parentElement;
+                item.remove();
+                document.getElementById('error').className = 'hidden';
+                window.location.reload(true);
+            })
+            .catch(function (e) {
+                console.error(e);
+                document.getElementById('error').className = '';
+            });
     };
 }
